@@ -1,0 +1,59 @@
+Sub SendEmail()
+    Dim outlookApp As Object
+    Dim outlookMail As Object
+    
+    ' Ustawienia e-maila
+    Dim recipientEmail As String
+    Dim subject As String
+    Dim body As String
+
+    ' Inicjalizacja aplikacji Outlook
+    On Error Resume Next
+    Set outlookApp = GetObject(, "Outlook.Application")
+    On Error GoTo 0
+
+    If outlookApp Is Nothing Then
+        Set outlookApp = CreateObject("Outlook.Application")
+    End If
+
+    ' Adres e-mail odbiorcy
+    recipientEmail = "example@example.com"
+    
+    ' Sprawdzenie, czy adres e-mail nie jest pusty
+    If recipientEmail = "" Then
+        MsgBox "Proszę wprowadzić co najmniej jeden adres e-mail.", vbExclamation
+        Exit Sub
+    End If
+    
+    'Download of value from A1 Cell
+    Dim CurrentDate As Variant
+    Dim CompanyID As Variant
+    CurrentDate = ThisWorkbook.Sheets("Arkusz1").Range("A1").Value
+    CompanyID = ThisWorkbook.Sheets("Arkusz1").Range("A2").Value
+
+    ' Temat i treść e-maila
+    subject = "Test"
+    body = "To jest mój test" & Chr(10) & "Sehr geehrte Damen und Herren Konnten" & Chr(10) & "Konnten Sie bitte OP-Liste per " & CurrentDate & CompanyID
+    
+    ' Tworzenie nowego e-maila
+    Set outlookMail = outlookApp.CreateItem(0)
+
+    With outlookMail
+        .To = recipientEmail
+        .subject = subject
+        .body = body
+        
+        ' załączniki, CC, BCC, itp.
+        ' .Attachments.Add "plik\plik.pdf"
+        ' .CC = "kopia@example.com"
+        ' .BCC = "ukryta_kopia@example.com"
+        
+        ' Wysyłanie e-maila
+        .Send
+    End With
+
+    ' Zwolnij zasoby
+    Set outlookMail = Nothing
+    Set outlookApp = Nothing
+End Sub
+
