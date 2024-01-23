@@ -17,7 +17,10 @@ Sub SendEmail()
     End If
 
     ' Adres e-mail odbiorcy
-    recipientEmail = "example@example.com"
+    recipientEmail = "email1@email.com" & vbNewLine & _
+                      "email2@email.com" & vbNewLine & _
+                      "email3@email.com" & vbNewLine & _
+                      "email4@email.com"
     
     ' Sprawdzenie, czy adres e-mail nie jest pusty
     If recipientEmail = "" Then
@@ -25,15 +28,33 @@ Sub SendEmail()
         Exit Sub
     End If
     
-    'Download of value from A1 Cell
+    'Zainicjalizowanie zmiennych w ciele maila
     Dim CurrentDate As Variant
     Dim CompanyID As Variant
+    Dim CompanyName As Variant
+    Dim TradingPartner As Variant
+    Dim PartnerName As Variant
+    Dim FromCompanyNumber As Variant
+    Dim FromCompanyName As Variant
+    
+    'Podanie wartości do zmiennych
     CurrentDate = ThisWorkbook.Sheets("Arkusz1").Range("A1").Value
     CompanyID = ThisWorkbook.Sheets("Arkusz1").Range("A2").Value
+    CompanyName = ThisWorkbook.Sheets("Arkusz1").Range("A3").Value
+    TradingPartner = ThisWorkbook.Sheets("Arkusz1").Range("A4").Value
+    PartnerName = ThisWorkbook.Sheets("Arkusz1").Range("A5").Value
+    FromCompanyNumber = ThisWorkbook.Sheets("Arkusz1").Range("A6").Value
+    FromCompanyName = ThisWorkbook.Sheets("Arkusz1").Range("A7").Value
+    Footer = ThisWorkbook.Sheets("Arkusz1").Range("A8").Value
+    Ending = ThisWorkbook.Sheets("Arkusz1").Range("B1").Value
+    
+    ' Temat
+    subject = Replace(Replace(Replace(CompanyName, "<br>", ""), "<b>", ""), "<u>", "")
+    
+    'treść e-maila
+   body = Footer
+        
 
-    ' Temat i treść e-maila
-    subject = "Test"
-    body = "To jest mój test" & Chr(10) & "Sehr geehrte Damen und Herren Konnten" & Chr(10) & "Konnten Sie bitte OP-Liste per " & CurrentDate & CompanyID
     
     ' Tworzenie nowego e-maila
     Set outlookMail = outlookApp.CreateItem(0)
@@ -41,15 +62,16 @@ Sub SendEmail()
     With outlookMail
         .To = recipientEmail
         .subject = subject
-        .body = body
+        .BodyFormat = 2
+        .HTMLBody = Ending & vbCrLf & CompanyName & CurrentDate & body
         
-        ' załączniki, CC, BCC, itp.
-        ' .Attachments.Add "plik\plik.pdf"
+        ' Jeśli chcesz, możesz dodać załączniki, CC, BCC, itp.
+        ' .Attachments.Add "ścieżka_do_pliku\plik.pdf"
         ' .CC = "kopia@example.com"
         ' .BCC = "ukryta_kopia@example.com"
         
         ' Wysyłanie e-maila
-        .Send
+        .Display
     End With
 
     ' Zwolnij zasoby
